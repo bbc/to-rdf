@@ -5,15 +5,15 @@ module RdfMapper
   def to_rdf
     return unless uri
     return if rdf_mapping.empty?
-    rdf = "<#{uri}>\n"
-    rdf += "\ta #{type_uri} ;\n" if type_uri
+    rdf = node_to_s(uri) + "\n"
+    rdf += "\ta #{node_to_s(type_uri)} ;\n" if type_uri
     rdf_mapping.keys.each do |prop|
       value = rdf_mapping[prop]
       next unless value
       if value.respond_to? :each
-        value.each { |v| rdf += "\t#{prop} " + node_to_s(v) }
+        value.each { |v| rdf += "\t#{prop} " + node_to_s(v) + " ;\n" }
       else
-        rdf += "\t#{prop} " + node_to_s(value)
+        rdf += "\t#{prop} " + node_to_s(value) + " ;\n"
       end
     end
     rdf += "\t.\n"
@@ -21,19 +21,19 @@ module RdfMapper
 
   def node_to_s(node)
     if node.class == String
-      s = "\"\"\"#{node.gsub('"', '\"')}\"\"\" ;\n"
+      s = "\"\"\"#{node.gsub('"', '\"')}\"\"\""
     elsif node.class == Fixnum
-      s = "#{node} ;\n"
+      s = "#{node}"
     elsif node.class == DateTime
-      s = "\"#{node}\"^^xsd:dateTime ;\n"
+      s = "\"#{node}\"^^xsd:dateTime"
     elsif node.class == URI::HTTP
-      s = "<#{node.to_s}> ;\n"
+      s = "<#{node.to_s}>"
     elsif node.class == TrueClass
-      s = "\"true\"^^xsd:boolean ;\n"
+      s = "\"true\"^^xsd:boolean"
     elsif node.class == FalseClass
-      s = "\"false\"^^xsd:boolean ;\n"
+      s = "\"false\"^^xsd:boolean"
     elsif node.respond_to? :uri
-      s = "<#{node.uri}> ;\n"
+      s = "<#{node.uri}>"
     else
       s = nil
     end
