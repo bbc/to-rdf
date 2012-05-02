@@ -30,5 +30,5 @@ end
 
 foo = Foo.new
 foo.name = "Name"
-foo.date = DateTime.new
+foo.date = DateTime.new(2012,4,4)
 puts foo.to_rdf
