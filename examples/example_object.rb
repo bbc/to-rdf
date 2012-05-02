@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'rdf_mapper'
+require 'uri'
 
 class Foo
 
@@ -9,12 +10,12 @@ class Foo
 
   # The URI of the object
   def uri
-    'http://example.com/foo'
+    URI('http://example.com/foo')
   end
 
   # The URI of the type of the object
   def type_uri
-    'http://purl.org/ontology/Foo'
+    URI('http://purl.org/ontology/Foo')
   end
 
   # The mapping to RDF properties
