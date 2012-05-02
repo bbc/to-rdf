@@ -27,6 +27,8 @@ module RdfMapper
       s = (namespaces.has_key? node.split(':').first) ? node : "\"\"\"#{node.gsub('"', '\"')}\"\"\""
     elsif node.class == Fixnum
       s = "#{node}"
+    elsif node.class == Float
+      s = "#{node}"
     elsif node.class == DateTime
       s = "\"#{node}\"^^xsd:dateTime"
     elsif node.kind_of? URI::Generic
