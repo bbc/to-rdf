@@ -10,7 +10,7 @@ describe RdfMapper do
     node_to_s(1).should eq("1")
     node_to_s(DateTime.new(2012, 4, 2)).should eq('"2012-04-02T00:00:00+00:00"^^xsd:dateTime')
     node_to_s(URI('http://example.com')).should eq('<http://example.com>')
-    node_to_s(nil).should eq(nil)
+    lambda { node_to_s(nil) }.should raise_error
   end
 
   it "deals correctly with empty objects" do

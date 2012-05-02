@@ -26,7 +26,7 @@ module RdfMapper
       s = "#{node}"
     elsif node.class == DateTime
       s = "\"#{node}\"^^xsd:dateTime"
-    elsif node.class == URI::HTTP
+    elsif node.class.ancestors.include? URI::Generic
       s = "<#{node.to_s}>"
     elsif node.class == TrueClass
       s = "\"true\"^^xsd:boolean"
@@ -35,7 +35,7 @@ module RdfMapper
     elsif node.respond_to? :uri
       s = "<#{node.uri}>"
     else
-      s = nil
+      raise Exception.new("No mapping for #{node}")
     end
     s
   end
