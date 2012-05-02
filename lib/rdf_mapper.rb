@@ -2,11 +2,33 @@ require 'uri'
 
 module RdfMapper
 
+  def self.to_rdf(objects)
+    namespaces = {}
+    rdf = ""
+    objects.each do |object|
+      namespaces.merge!(object.namespaces)
+      rdf += object.to_rdf_without_namespaces if object.respond_to? :to_rdf_without_namespaces
+    end
+    turtle_namespaces(namespaces) + rdf
+  end
+
+  def self.turtle_namespaces(namespaces)
+    turtle = ""
+    namespaces.each do |k, v|
+      turtle += "@prefix #{k}: <#{v.to_s}> .\n"
+    end
+    turtle += "\n"
+  end
+
   def to_rdf
+    rdf = to_rdf_without_namespaces
+    rdf ? RdfMapper.turtle_namespaces(namespaces) + rdf : nil
+  end
+
+  def to_rdf_without_namespaces
     return unless uri
-    return if rdf_mapping.empty?
-    rdf = turtle_namespaces
-    rdf += node_to_s(uri) + "\n"
+    return if rdf_mapping.empty? and not type_uri
+    rdf = node_to_s(uri) + "\n"
     rdf += "\ta #{node_to_s(type_uri)} ;\n" if type_uri
     rdf_mapping.keys.each do |prop|
       ns = prop.split(':').first
@@ -43,14 +65,6 @@ module RdfMapper
       raise Exception.new("No mapping for #{node}")
     end
     s
-  end
-
-  def turtle_namespaces
-    turtle = ""
-    namespaces.each do |k, v|
-      turtle += "@prefix #{k}: <#{v.to_s}> .\n"
-    end
-    turtle += "\n"
   end
 
   # To be overridden

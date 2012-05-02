@@ -60,4 +60,35 @@ describe RdfMapper do
 EOF
   end
 
+  it "can serialize a list of objects to RDF/Turtle" do
+    class Foo3
+      include RdfMapper
+      def namespaces
+        super.merge 'foo' => 'http://example.com/ontology/'
+      end
+      def uri
+        URI("http://example.com")
+      end
+      def type_uri
+        URI("http://example.com/Foo")
+      end
+    end
+
+    RdfMapper.to_rdf([Foo3.new, Foo3.new]).should eq <<EOF
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foo: <http://example.com/ontology/> .
+
+<http://example.com>
+	a <http://example.com/Foo> ;
+	.
+<http://example.com>
+	a <http://example.com/Foo> ;
+	.
+EOF
+  end
+
 end
