@@ -26,7 +26,7 @@ module RdfMapper
       s = "#{node}"
     elsif node.class == DateTime
       s = "\"#{node}\"^^xsd:dateTime"
-    elsif node.class.ancestors.include? URI::Generic
+    elsif node.kind_of? URI::Generic
       s = "<#{node.to_s}>"
     elsif node.class == TrueClass
       s = "\"true\"^^xsd:boolean"
