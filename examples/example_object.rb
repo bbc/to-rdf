@@ -18,6 +18,10 @@ class Foo
     URI('http://purl.org/ontology/Foo')
   end
 
+  def namespaces
+    super.merge 'foo' => 'http://example.com/ontology/'
+  end
+
   # The mapping to RDF properties
   def rdf_mapping
     {

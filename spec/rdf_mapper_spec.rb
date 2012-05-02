@@ -36,7 +36,28 @@ describe RdfMapper do
         { "foo:name" => name }
       end
     end
-    Foo2.new.to_rdf.should eq("<http://example.com>\n\ta <http://example.com/Foo> ;\n\tfoo:name \"\"\"blah\"\"\" ;\n\t.\n")
+
+    lambda { Foo2.new.to_rdf }.should raise_error # namespace 'foo' not defined
+
+    class Foo2
+      def namespaces
+        super.merge 'foo' => 'http://example.com/ontology/'
+      end
+    end
+
+    Foo2.new.to_rdf.should eq <<EOF
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foo: <http://example.com/ontology/> .
+
+<http://example.com>
+	a <http://example.com/Foo> ;
+	foo:name """blah""" ;
+	.
+EOF
   end
 
 end
