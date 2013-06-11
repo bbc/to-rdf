@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'uri'
 
-describe RdfMapper do
+describe ToRdf do
 
-  include RdfMapper
+  include ToRdf
 
   it "maps Ruby values to RDF/Turtle values" do
     node_to_s('string').should eq('"""string"""')
@@ -15,14 +15,14 @@ describe RdfMapper do
 
   it "deals correctly with empty objects" do
     class Foo1
-      include RdfMapper
+      include ToRdf
     end
     Foo1.new.to_rdf.should eq(nil)
   end
 
   it "maps Ruby objects to RDF/Turtle" do
     class Foo2
-      include RdfMapper
+      include ToRdf
       def name
         "blah"
       end
@@ -46,11 +46,13 @@ describe RdfMapper do
     end
 
     Foo2.new.to_rdf.should eq <<EOF
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dc11: <http://purl.org/dc/elements/1.1/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/terms/> .
 @prefix foo: <http://example.com/ontology/> .
 
 <http://example.com>
@@ -62,7 +64,7 @@ EOF
 
   it "can serialize a list of objects to RDF/Turtle" do
     class Foo3
-      include RdfMapper
+      include ToRdf
       def namespaces
         super.merge 'foo' => 'http://example.com/ontology/'
       end
@@ -74,12 +76,14 @@ EOF
       end
     end
 
-    RdfMapper.to_rdf([Foo3.new, Foo3.new]).should eq <<EOF
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
+    ToRdf.to_rdf([Foo3.new, Foo3.new]).should eq <<EOF
+@prefix dc11: <http://purl.org/dc/elements/1.1/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/terms/> .
 @prefix foo: <http://example.com/ontology/> .
 
 <http://example.com>

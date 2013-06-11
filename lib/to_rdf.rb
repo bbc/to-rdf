@@ -1,7 +1,7 @@
 require 'uri'
 require 'date'
 
-module RdfMapper
+module ToRdf
 
   def self.to_rdf(objects)
     namespaces = {}
@@ -23,7 +23,7 @@ module RdfMapper
 
   def to_rdf
     rdf = to_rdf_without_namespaces
-    rdf ? RdfMapper.turtle_namespaces(namespaces) + rdf : nil
+    rdf ? ToRdf.turtle_namespaces(namespaces) + rdf : nil
   end
 
   def to_rdf_without_namespaces
@@ -72,11 +72,13 @@ module RdfMapper
 
   def namespaces
     {
-      'dc' => URI('http://purl.org/dc/elements/1.1/'),
+      'dc11' => URI('http://purl.org/dc/elements/1.1/'),
       'rdf' => URI('http://www.w3.org/1999/02/22-rdf-syntax-ns#'),
       'rdfs' => URI('http://www.w3.org/2000/01/rdf-schema#'),
       'xsd' => URI('http://www.w3.org/2001/XMLSchema#'),
       'owl' => URI('http://www.w3.org/2002/07/owl#'),
+      'foaf' => URI('http://xmlns.com/foaf/0.1/'),
+      'dc' => URI('http://purl.org/dc/terms/'),
     }
   end
 
